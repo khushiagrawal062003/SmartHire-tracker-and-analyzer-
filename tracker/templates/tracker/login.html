@@ -1,0 +1,88 @@
+{% extends 'tracker/base.html' %}
+{% load static %}
+{% block title %}SmartHire - Sign In{% endblock %}
+
+{% block content %}
+<div class="row g-0 rounded-4 overflow-hidden shadow-lg my-4 mx-auto animate-fade-in" style="max-width: 1200px; min-height: 700px; background-color: var(--bg-card); border: 1px solid var(--border-color);">
+    
+    <!-- Left column: Premium SaaS Hero Banner -->
+    <div class="col-lg-6 d-none d-lg-flex auth-hero-section flex-column justify-content-between p-5 text-white" 
+         style="background: linear-gradient(135deg, #4f46e5 0%, #1e1b4b 100%);">
+        
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-4">
+                <i class="bi bi-briefcase-fill text-info fs-2"></i>
+                <span class="fs-3 fw-bold font-heading text-white">SmartHire</span>
+            </div>
+            <h1 class="fw-extrabold font-heading text-white mb-3">Maximize Your Career Relevancy</h1>
+            <p class="fs-5 opacity-75">Track applications, analyze your resume dynamically with regex matching, and never miss an interview deadline.</p>
+        </div>
+        
+        <!-- Illustration Image -->
+        <div class="my-4 text-center">
+            <img src="{% static 'images/login_illustration.jpg' %}" 
+                 alt="SmartHire Recruitment Analytics" 
+                 class="img-fluid rounded-4 shadow-lg border border-light border-opacity-25" 
+                 style="max-height: 280px; object-fit: cover; width: 100%;">
+        </div>
+        
+        <div class="opacity-50 text-xs">
+            © 2026 SmartHire. Powered by Django & MongoDB.
+        </div>
+    </div>
+    
+    <!-- Right column: Premium Authentication Form -->
+    <div class="col-12 col-lg-6 d-flex align-items-center justify-content-center p-5" style="background-color: var(--bg-card);">
+        <div class="w-100" style="max-width: 420px;">
+            <div class="text-center text-lg-start mb-4">
+                <i class="bi bi-shield-lock-fill text-primary fs-1 mb-2 d-lg-none d-inline-block"></i>
+                <h2 class="fw-bold font-heading mb-1 text-primary">Welcome Back</h2>
+                <p class="text-muted">Enter details to manage your HR pipeline.</p>
+            </div>
+            
+            <form method="POST" action="{% url 'login' %}" novalidate>
+                {% csrf_token %}
+                
+                <!-- Username field -->
+                <div class="mb-4">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person text-secondary"></i></span>
+                        <input type="text" name="username" id="username" class="form-control" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                
+                <!-- Password field -->
+                <div class="mb-4">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock text-secondary"></i></span>
+                        <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                
+                <!-- Remember check -->
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label text-muted" style="font-size: 0.9rem;" for="rememberMe">
+                            Remember my session
+                        </label>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary-custom w-100 py-3 mb-4 shadow">
+                    Sign In to Dashboard <i class="bi bi-arrow-right-short fs-5"></i>
+                </button>
+                
+                <div class="text-center text-lg-start">
+                    <p class="mb-0 text-muted" style="font-size: 0.95rem;">
+                        Don't have an account? <a href="{% url 'register' %}" class="text-primary fw-bold text-decoration-none">Create free account</a>
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

@@ -1,0 +1,229 @@
+{% extends 'tracker/base.html' %}
+{% block title %}SmartHire - Admin Console{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Header Block -->
+    <div class="row align-items-center mb-5">
+        <div class="col">
+            <h1 class="fw-bold font-heading mb-1 text-warning"><i class="bi bi-shield-lock-fill"></i> Admin Console Dashboard</h1>
+            <p class="text-muted mb-0">System-wide data aggregate summaries, database checks, and user pursuits management.</p>
+        </div>
+        <div class="col-auto mt-3 mt-md-0 d-flex gap-2">
+            <a href="{% url 'admin_users' %}" class="btn btn-outline-primary fw-semibold py-2 px-3" style="border-radius: 0.65rem;">
+                <i class="bi bi-people-fill me-1"></i> Manage Users
+            </a>
+            <a href="{% url 'admin_applications' %}" class="btn btn-outline-success fw-semibold py-2 px-3" style="border-radius: 0.65rem;">
+                <i class="bi bi-folder-fill me-1"></i> Manage Applications
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Metrics Grid -->
+    <div class="row g-4 mb-5">
+        <!-- Registered Users -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card card-custom metric-card shadow-primary-glow p-3 d-flex flex-row justify-content-between align-items-center border-0 bg-white" style="border-radius: 1rem;">
+                <div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.08em; font-weight: 700;">System Users</h6>
+                    <h2 class="fw-bold mb-0 text-dark">{{ total_users }}</h2>
+                </div>
+                <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-3">
+                    <i class="bi bi-people-fill fs-3"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Total MongoDB Applications -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card card-custom metric-card secondary shadow-secondary-glow p-3 d-flex flex-row justify-content-between align-items-center border-0 bg-white" style="border-radius: 1rem; border-top-color: var(--secondary) !important;">
+                <div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.08em; font-weight: 700;">Total Jobs Tracked</h6>
+                    <h2 class="fw-bold mb-0 text-info">{{ summary.total }}</h2>
+                </div>
+                <div class="bg-info bg-opacity-10 text-info rounded-3 p-3">
+                    <i class="bi bi-folder-fill fs-3"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Resume Match Average -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card card-custom metric-card shadow-success-glow p-3 d-flex flex-row justify-content-between align-items-center border-0 bg-white" style="border-radius: 1rem; border-top-color: var(--success) !important;">
+                <div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.08em; font-weight: 700;">Avg match score</h6>
+                    <h2 class="fw-bold mb-0 text-success">{{ summary.avg_score }}%</h2>
+                </div>
+                <div class="bg-success bg-opacity-10 text-success rounded-3 p-3">
+                    <i class="bi bi-shield-check-fill fs-3"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Active Deadlines -->
+        <div class="col-12 col-sm-6 col-md-3">
+            <div class="card card-custom metric-card danger shadow-danger-glow p-3 d-flex flex-row justify-content-between align-items-center border-0 bg-white" style="border-radius: 1rem; border-top-color: var(--danger) !important;">
+                <div>
+                    <h6 class="text-muted text-uppercase mb-1" style="font-size: 0.75rem; letter-spacing: 0.08em; font-weight: 700;">Upcoming Deadlines</h6>
+                    <h2 class="fw-bold mb-0 text-danger">{{ total_deadlines }}</h2>
+                </div>
+                <div class="bg-danger bg-opacity-10 text-danger rounded-3 p-3">
+                    <i class="bi bi-clock-fill fs-3"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Aggregate Pipelines Row -->
+    <div class="row g-4 mb-5">
+        <!-- Interviews Count -->
+        <div class="col-12 col-md-4">
+            <div class="card card-custom p-3 border-start border-4 border-warning shadow-sm bg-white border-0" style="border-radius: 0.75rem;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.75rem; font-weight: 700;">Total Interviews</span>
+                        <h3 class="fw-bold text-warning mb-0">{{ summary.interviewing }}</h3>
+                    </div>
+                    <i class="bi bi-people-fill text-warning display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Offers Count -->
+        <div class="col-12 col-md-4">
+            <div class="card card-custom p-3 border-start border-4 border-success shadow-sm bg-white border-0" style="border-radius: 0.75rem;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.75rem; font-weight: 700;">Total Offers</span>
+                        <h3 class="fw-bold text-success mb-0">{{ summary.offered }}</h3>
+                    </div>
+                    <i class="bi bi-trophy-fill text-success display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Rejections Count -->
+        <div class="col-12 col-md-4">
+            <div class="card card-custom p-3 border-start border-4 border-danger shadow-sm bg-white border-0" style="border-radius: 0.75rem;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted text-uppercase mb-1 d-block" style="font-size: 0.75rem; font-weight: 700;">Total Rejections</span>
+                        <h3 class="fw-bold text-danger mb-0">{{ summary.rejected }}</h3>
+                    </div>
+                    <i class="bi bi-x-circle-fill text-danger display-6 opacity-50"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts & Tables Layout Row -->
+    <div class="row g-4">
+        <!-- Visual System Distribution Chart (Left Column) -->
+        <div class="col-12 col-lg-5">
+            <div class="card card-custom p-4 shadow-sm border-0 bg-white h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h5 class="fw-bold font-heading text-dark mb-1">System status distribution</h5>
+                    <p class="text-muted text-sm" style="font-size: 0.85rem;">Volume distribution of active application stages.</p>
+                </div>
+                
+                <div class="chart-container-card my-3 d-flex align-items-center justify-content-center" style="height: 250px;">
+                    {% if summary.total > 0 %}
+                        <canvas id="adminStatusChart"></canvas>
+                    {% else %}
+                        <div class="text-center text-muted opacity-50 py-5">
+                            <i class="bi bi-pie-chart display-3 d-block mb-2"></i>
+                            <small>No data tracked in MongoDB database</small>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent System Applications Log Table (Right Column) -->
+        <div class="col-12 col-lg-7">
+            <div class="card card-custom p-0 overflow-hidden shadow-sm border-0 bg-white h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <div class="card-header-custom d-flex justify-content-between align-items-center bg-light bg-opacity-25 border-bottom">
+                        <h5 class="mb-0 fw-bold font-heading text-dark">Recent System Applications</h5>
+                        <span class="badge bg-secondary text-white py-1.5 px-3" style="border-radius: 50rem;">LATEST 5</span>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-custom mb-0">
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Company & Role</th>
+                                    <th>Status</th>
+                                    <th>Date Applied</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% if all_apps %}
+                                    {% for app in all_apps %}
+                                    <tr>
+                                        <td class="fw-semibold text-primary"><i class="bi bi-person-fill me-1"></i>{{ app.username }}</td>
+                                        <td>
+                                            <div class="fw-bold text-dark fs-7">{{ app.company_name }}</div>
+                                            <small class="text-muted d-block">{{ app.job_title }}</small>
+                                        </td>
+                                        <td>
+                                            <span class="badge-status badge-{{ app.status }}">{{ app.status }}</span>
+                                        </td>
+                                        <td class="text-muted">{{ app.date_applied }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-5">
+                                            <i class="bi bi-folder-x display-2 empty-state-icon"></i>
+                                            <p class="text-muted mb-0">No applications tracked across the system.</p>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="p-3 border-top text-center bg-light bg-opacity-10">
+                    <a href="{% url 'admin_applications' %}" class="btn btn-primary-custom btn-sm px-4 py-2">View System Applications</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if summary.total > 0 %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+    const labelColor = isDark ? "#a1a1aa" : "#64748b";
+
+    const ctx = document.getElementById('adminStatusChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Applied', 'Interviewing', 'Offered', 'Rejected'],
+            datasets: [{
+                data: [{{ summary.applied }}, {{ summary.interviewing }}, {{ summary.offered }}, {{ summary.rejected }}],
+                backgroundColor: ['#4f46e5', '#f59e0b', '#10b981', '#f43f5e'],
+                borderWidth: 2,
+                borderColor: 'transparent'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        font: { family: "'Inter', sans-serif", size: 11, weight: '500' },
+                        color: labelColor,
+                        boxWidth: 10,
+                        padding: 10
+                    }
+                }
+            },
+            cutout: '72%'
+        }
+    });
+});
+</script>
+{% endif %}
+{% endblock %}

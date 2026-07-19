@@ -1,0 +1,123 @@
+{% extends 'tracker/base.html' %}
+{% block title %}SmartHire - Edit Job Application{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in mx-auto" style="max-width: 900px;">
+    <!-- Breadcrumbs & Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <nav aria-label="breadcrumb" style="font-size: 0.95rem;">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" class="text-decoration-none text-primary"><i class="bi bi-house-door-fill me-1"></i> Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'detail_application' app.id %}" class="text-decoration-none text-primary">{{ app.company_name }}</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Modify Details</li>
+                </ol>
+            </nav>
+            <h1 class="fw-bold font-heading mb-1">Edit Job Application</h1>
+            <p class="text-muted mb-0">Modify information or update details of your career opportunities.</p>
+        </div>
+    </div>
+
+    <!-- Main Card Form -->
+    <div class="card card-custom p-4 p-md-5 shadow-md border-0 bg-white">
+        <h4 class="fw-bold font-heading border-bottom pb-3 mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-pencil-square text-warning fs-3"></i> Update Opportunity Information
+        </h4>
+        
+        <form method="POST" action="{% url 'edit_application' app.id %}" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <div class="row g-4 mb-4">
+                <!-- Company Name -->
+                <div class="col-12 col-md-6">
+                    <label for="id_company_name" class="form-label">Company Name <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text text-muted" style="border-radius: 0.65rem 0 0 0.65rem;"><i class="bi bi-building"></i></span>
+                        <input type="text" name="company_name" id="id_company_name" class="form-control border-start-0" value="{{ app.company_name }}" required style="border-radius: 0 0.65rem 0.65rem 0;">
+                        <div class="invalid-feedback">Company name is required.</div>
+                    </div>
+                </div>
+                
+                <!-- Job Title -->
+                <div class="col-12 col-md-6">
+                    <label for="id_job_title" class="form-label">Job Role / Title <span class="text-danger">*</span></label>
+                    <div class="input-group">
+                        <span class="input-group-text text-muted" style="border-radius: 0.65rem 0 0 0.65rem;"><i class="bi bi-briefcase"></i></span>
+                        <input type="text" name="job_title" id="id_job_title" class="form-control border-start-0" value="{{ app.job_title }}" required style="border-radius: 0 0.65rem 0.65rem 0;">
+                        <div class="invalid-feedback">Job title is required.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <!-- Status -->
+                <div class="col-12 col-md-4">
+                    <label for="id_status" class="form-label">Application Status</label>
+                    <select name="status" id="id_status" class="form-select" style="border-radius: 0.65rem;">
+                        <option value="applied" {% if app.status == 'applied' %}selected{% endif %}>Applied</option>
+                        <option value="interviewing" {% if app.status == 'interviewing' %}selected{% endif %}>Interviewing</option>
+                        <option value="offered" {% if app.status == 'offered' %}selected{% endif %}>Offered</option>
+                        <option value="rejected" {% if app.status == 'rejected' %}selected{% endif %}>Rejected</option>
+                    </select>
+                </div>
+                
+                <!-- Salary -->
+                <div class="col-12 col-md-4">
+                    <label for="id_salary" class="form-label">Compensation / Package</label>
+                    <div class="input-group">
+                        <span class="input-group-text text-muted" style="border-radius: 0.65rem 0 0 0.65rem;">₹ / $</span>
+                        <input type="text" name="salary" id="id_salary" class="form-control border-start-0" value="{{ app.salary|default:'' }}" style="border-radius: 0 0.65rem 0.65rem 0;">
+                    </div>
+                </div>
+                
+                <!-- Deadline Date -->
+                <div class="col-12 col-md-4">
+                    <label for="id_deadline" class="form-label">Follow-up Deadline</label>
+                    <input type="date" name="deadline" id="id_deadline" class="form-control" value="{{ app.deadline }}" style="border-radius: 0.65rem;">
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <!-- Contact Email -->
+                <div class="col-12 col-md-6">
+                    <label for="id_contact_email" class="form-label">Contact Email (for system notifications)</label>
+                    <div class="input-group">
+                        <span class="input-group-text text-muted" style="border-radius: 0.65rem 0 0 0.65rem;"><i class="bi bi-envelope"></i></span>
+                        <input type="email" name="contact_email" id="id_contact_email" class="form-control border-start-0" value="{{ app.contact_email|default:'' }}" placeholder="hr@company.com" style="border-radius: 0 0.65rem 0.65rem 0;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Job Description / Requirements -->
+            <div class="mb-5">
+                <label for="id_description" class="form-label">Job Description / Target Keywords</label>
+                <textarea name="description" id="id_description" class="form-control" rows="6" placeholder="Modify required keywords." style="border-radius: 0.65rem;">{{ app.description }}</textarea>
+            </div>
+            
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-3 border-top pt-4">
+                <a href="{% url 'detail_application' app.id %}" class="btn btn-light border px-4 py-2.5" style="border-radius: 0.65rem; font-weight: 600;">Cancel</a>
+                <button type="submit" class="btn btn-primary-custom px-4 py-2.5 shadow"><i class="bi bi-save-fill"></i> Save Changes</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Validation helper
+    (function () {
+      'use strict'
+      var forms = document.querySelectorAll('.needs-validation')
+      Array.prototype.slice.call(forms)
+        .forEach(function (form) {
+          form.addEventListener('submit', function (event) {
+            if (!form.checkValidity()) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
+            form.classList.add('was-validated')
+          }, false)
+        })
+    })()
+</script>
+{% endblock %}

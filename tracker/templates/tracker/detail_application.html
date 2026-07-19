@@ -1,0 +1,149 @@
+{% extends 'tracker/base.html' %}
+{% block title %}SmartHire - {{ app.company_name }} | {{ app.job_title }}{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in">
+    <!-- Breadcrumbs & Header Actions -->
+    <div class="row align-items-center mb-5">
+        <div class="col">
+            <nav aria-label="breadcrumb" style="font-size: 0.95rem;">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'dashboard' %}" class="text-decoration-none text-primary"><i class="bi bi-house-door-fill me-1"></i> Dashboard</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ app.company_name }}</li>
+                </ol>
+            </nav>
+            <h1 class="fw-bold font-heading mb-1 text-primary">{{ app.company_name }}</h1>
+            <p class="text-muted fs-5 mb-0">{{ app.job_title }}</p>
+        </div>
+        <div class="col-auto d-flex gap-2">
+            <a href="{% url 'edit_application' app.id %}" class="btn btn-outline-warning d-flex align-items-center gap-1 py-2 px-3" style="border-radius: 0.65rem; font-weight: 600;">
+                <i class="bi bi-pencil-square"></i> Modify Details
+            </a>
+            <a href="{% url 'delete_application' app.id %}" class="btn btn-outline-danger d-flex align-items-center gap-1 py-2 px-3" style="border-radius: 0.65rem; font-weight: 600;">
+                <i class="bi bi-trash-fill"></i> Remove Opportunity
+            </a>
+        </div>
+    </div>
+
+    <!-- Main Layout Cards Grid -->
+    <div class="row g-4">
+        <!-- Left Side Column -->
+        <div class="col-12 col-lg-8">
+            <!-- Job Description Card -->
+            <div class="card card-custom p-4 p-md-5 mb-4 shadow-sm border-0 bg-white">
+                <h4 class="fw-bold font-heading mb-4 border-bottom pb-3">
+                    <i class="bi bi-file-earmark-text text-primary me-2"></i> Job Description
+                </h4>
+                <div class="whitespace-pre-wrap fs-6" style="line-height: 1.8;">
+                    {% if app.description %}
+                        {{ app.description }}
+                    {% else %}
+                        <div class="text-muted italic p-4 rounded-3 text-center" style="background-color: var(--input-bg); border: 1px solid var(--border-color);">
+                            <i class="bi bi-info-circle d-block fs-3 mb-2 text-warning"></i>
+                            No description specifications added. Modify the application details to insert requirements for resume match scanning.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Resume Analysis Card -->
+            {% if app.resume_score is not None %}
+            <div class="card card-custom p-4 p-md-5 shadow-sm border-0 bg-white">
+                <h4 class="fw-bold font-heading mb-4 border-bottom pb-3">
+                    <i class="bi bi-shield-check text-success me-2"></i> Resume Audit Report
+                </h4>
+                <div class="row align-items-center">
+                    <!-- Circle Gauge -->
+                    <div class="col-12 col-md-4 text-center mb-4 mb-md-0">
+                        <div class="circular-progress mx-auto" style="--progress-val: {{ app.resume_score }}">
+                            <div class="progress-value">{{ app.resume_score }}%</div>
+                        </div>
+                        <small class="text-muted fw-bold d-block mt-3" style="font-size: 0.9rem;">RELEVANCY COEFFICIENT</small>
+                    </div>
+                    
+                    <!-- Keyword lists -->
+                    <div class="col-12 col-md-8">
+                        <h6 class="fw-bold mb-2">Matched Core Skills ({{ app.matched_keywords|length }}):</h6>
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+                            {% if app.matched_keywords %}
+                                {% for kw in app.matched_keywords %}
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-3 py-2" style="font-size: 0.9rem; border-radius: 0.5rem;"><i class="bi bi-check-circle-fill me-1"></i>{{ kw }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-muted fs-6 italic">No keyword match found. Try updating your resume txt file with terms like Python or Django.</span>
+                            {% endif %}
+                        </div>
+                        
+                        <h6 class="fw-bold mb-2 text-muted">Missing Desirable Skills ({{ app.missing_keywords|length }}):</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            {% if app.missing_keywords %}
+                                {% for kw in app.missing_keywords %}
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-3 py-2" style="font-size: 0.9rem; border-radius: 0.5rem;"><i class="bi bi-exclamation-triangle-fill me-1"></i>{{ kw }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="text-success fw-bold fs-6"><i class="bi bi-shield-fill-check"></i> Outstanding! Resume covers all listed target keywords!</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <!-- CTA Resume matcher empty state card -->
+            <div class="card card-custom p-4 p-md-5 text-center shadow-sm border-0 bg-white">
+                <div class="my-4 text-primary"><i class="bi bi-file-earmark-person-fill display-3"></i></div>
+                <h4 class="fw-bold font-heading">AI Resume Quality Check</h4>
+                <p class="text-muted max-width-md mx-auto mb-4 fs-6">Upload a plain text `.txt` resume to scan keywords automatically against the job description specifications.</p>
+                <a href="{% url 'upload_resume' %}?app_id={{ app.id }}" class="btn btn-primary-custom px-4 py-2.5 shadow"><i class="bi bi-shield-check"></i> Audit Match Relevancy</a>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Side Column -->
+        <div class="col-12 col-lg-4">
+            <!-- Sidebar Details Card -->
+            <div class="card card-custom p-4 shadow-sm border-0 mb-4 bg-white">
+                <h5 class="fw-bold font-heading border-bottom pb-2 mb-4">Application Summary</h5>
+                
+                <ul class="list-unstyled mb-0" style="font-size: 1.02rem;">
+                    <li class="mb-3.5 d-flex justify-content-between align-items-center">
+                        <span class="text-muted">Pipeline Status</span>
+                        <span class="badge-status badge-{{ app.status }}">{{ app.status }}</span>
+                    </li>
+                    <li class="mb-3.5 pt-2 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-color) !important;">
+                        <span class="text-muted">Salary Package</span>
+                        <span class="fw-bold">
+                            {% if app.salary %}{{ app.salary }}{% else %}<span class="text-muted opacity-50">Not Set</span>{% endif %}
+                        </span>
+                    </li>
+                    <li class="mb-3.5 pt-2 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-color) !important;">
+                        <span class="text-muted">Logging Date</span>
+                        <span>{{ app.date_applied }}</span>
+                    </li>
+                    <li class="mb-3.5 pt-2 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-color) !important;">
+                        <span class="text-muted">Follow-up Deadline</span>
+                        <span class="fw-bold">
+                            {% if app.deadline %}{{ app.deadline }}{% else %}<span class="text-muted opacity-50">No Deadline</span>{% endif %}
+                        </span>
+                    </li>
+                    <li class="pt-2 d-flex justify-content-between align-items-center border-top" style="border-color: var(--border-color) !important;">
+                        <span class="text-muted">HR Contact</span>
+                        <span class="text-truncate fw-semibold" style="max-width: 170px;" title="{{ app.contact_email|default:'' }}">
+                            {% if app.contact_email %}{{ app.contact_email }}{% else %}<span class="text-muted opacity-50">None</span>{% endif %}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Deadline Widget -->
+            {% if app.deadline %}
+            <div class="card card-custom p-4 border-start border-primary border-4 shadow-sm bg-primary bg-opacity-10 border-0">
+                <h6 class="fw-bold text-primary font-heading mb-1 d-flex align-items-center gap-1">
+                    <i class="bi bi-clock-fill"></i> Follow-up Active
+                </h6>
+                <p class="text-muted mb-0" style="font-size: 0.9rem;">Periodic reminder scheduler checks this alarm on: <strong>{{ app.deadline }}</strong>.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'tracker/base.html' %}
+{% block title %}SmartHire - Upload Resume{% endblock %}
+
+{% block content %}
+<div class="animate-fade-in mx-auto" style="max-width: 800px;">
+    <!-- Header -->
+    <div class="row mb-4 align-items-center">
+        <div class="col">
+            <h1 class="fw-bold font-heading mb-1">AI Resume Matcher</h1>
+            <p class="text-muted mb-0">Evaluate your resume's relevancy score against your tracked jobs using keyword extraction.</p>
+        </div>
+    </div>
+
+    <!-- Main Card -->
+    <div class="card card-custom p-4 p-md-5 shadow-md border-0 bg-white">
+        <h4 class="fw-bold font-heading border-bottom pb-3 mb-4 d-flex align-items-center gap-2">
+            <i class="bi bi-file-earmark-arrow-up text-primary fs-3"></i> Resume Audit Match
+        </h4>
+        
+        <form method="POST" action="{% url 'analyze_resume' %}" enctype="multipart/form-data" class="needs-validation" novalidate>
+            {% csrf_token %}
+            
+            <!-- Application Selection -->
+            <div class="mb-4">
+                <label for="app_id" class="form-label">Select Target Job Application <span class="text-danger">*</span></label>
+                <select name="app_id" id="app_id" class="form-select py-2.5" required style="border-radius: 0.65rem;">
+                    <option value="" disabled {% if not selected_app_id %}selected{% endif %}>-- Choose job application to analyze --</option>
+                    {% for app in applications %}
+                        <option value="{{ app.id }}" {% if selected_app_id == app.id %}selected{% endif %}>
+                            {{ app.company_name }} - {{ app.job_title }}
+                        </option>
+                    {% endfor %}
+                </select>
+                <div class="invalid-feedback">Please select a target job application.</div>
+                <small class="text-muted mt-2 d-block">The keywords from this job's description will be matched against the text inside your resume.</small>
+            </div>
+            
+            <!-- Drag and Drop Upload Area -->
+            <div class="mb-5">
+                <label class="form-label">Upload Resume Document (TXT only) <span class="text-danger">*</span></label>
+                <div class="upload-area p-5" id="uploadArea" style="border-radius: 1rem;">
+                    <i class="bi bi-file-earmark-arrow-up-fill upload-icon display-3 mb-3 d-block text-primary"></i>
+                    <h5 class="fw-bold mb-2" id="uploadText">Drag & Drop your Resume here</h5>
+                    <p class="text-muted mb-4" id="uploadSubtext" style="font-size: 0.95rem;">or click to browse files from your computer explorer</p>
+                    <input type="file" name="resume" id="fileInput" class="d-none" accept=".txt" required>
+                    <span class="badge bg-secondary py-2 px-3 fs-7" style="border-radius: 50rem;">TXT FORMAT ONLY</span>
+                </div>
+                <div class="invalid-feedback text-center mt-2">Resume file is required.</div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="d-flex justify-content-end gap-3 border-top pt-4">
+                <a href="{% url 'dashboard' %}" class="btn btn-light border px-4 py-2.5" style="border-radius: 0.65rem; font-weight: 600;">Cancel</a>
+                <button type="submit" class="btn btn-primary-custom px-4 py-2.5 shadow"><i class="bi bi-shield-check"></i> Run Matcher Analysis</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
