@@ -17,8 +17,8 @@ def get_db():
         try:
             _db_client = pymongo.MongoClient(
                 host=mongo_cfg['host'],
-                port=mongo_cfg['port'],
-                serverSelectionTimeoutMS=2000  # Timeout quickly if database is offline
+                port=mongo_cfg.get('port', 27017),
+                serverSelectionTimeoutMS=5000  # Increased timeout for cloud database connection
             )
             # Force a check to verify connection
             _db_client.server_info()
