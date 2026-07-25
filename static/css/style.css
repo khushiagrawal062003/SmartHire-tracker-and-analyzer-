@@ -407,9 +407,28 @@ h1, h2, h3, h4, h5, h6 {
     color: var(--primary);
 }
 
-/* Dark mode inputs border correction */
-[data-theme="dark"] .input-group-text {
-    background-color: #27272a;
-    border-color: #27272a;
-    color: #a1a1aa;
+/* Dark mode inputs and text contrast corrections */
+.text-muted {
+    color: var(--text-muted) !important;
 }
+
+/* Input placeholder text readability contrast */
+.form-control::placeholder,
+::placeholder {
+    color: var(--text-muted) !important;
+    opacity: 0.65 !important;
+}
+
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    border-color: var(--border-color);
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .input-group-text {
+    background-color: var(--bg-card);
+    border-color: var(--border-color);
+    color: var(--text-muted);
+}
+
