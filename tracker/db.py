@@ -22,10 +22,10 @@ def get_db():
             )
             # Force a check to verify connection
             _db_client.server_info()
-        except pymongo.errors.ServerSelectionTimeoutError as e:
+        except (pymongo.errors.PyMongoError, ValueError, TypeError) as e:
             raise ConnectionError(
-                "Could not connect to MongoDB server. Please ensure MongoDB Community Server "
-                "is installed and running locally on port 27017."
+                "Could not connect to MongoDB server. Please check your credentials, "
+                "database link, and network access. Error: " + str(e)
             ) from e
             
     return _db_client[settings.MONGODB_SETTINGS['db_name']]
