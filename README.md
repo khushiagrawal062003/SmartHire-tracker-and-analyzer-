@@ -1,84 +1,86 @@
-# SmartHire – Job Application Tracker & Resume Keyword Matcher
+# SmartHire-tracker-and-analyzer-
 
-SmartHire is a premium, feature-rich HR-Tech SaaS application designed to help job seekers track their active job applications and evaluate resume relevancy against job descriptions using automated AI keyword extraction.
+This repository contains the **SmartHire-tracker-and-analyzer-** full-stack application used for managing job applications, resume keyword matching, pipeline analytics charts, and student/admin dashboards.
 
----
-
-## 🚀 Features
-
-- **Personal Dashboard**: View key pipeline metrics and manage applications on a spacious full-width tracker interface.
-- **Visual Analytics Center**: A dedicated reports page displaying pipeline distribution doughnut charts (powered by Chart.js) and custom status cards.
-- **MongoDB CRUD**: Direct, high-performance NoSQL operations (using `pymongo` cursors) to manage tracked applications.
-- **AI Resume Matching**: Upload text resumes to automatically check match scores using regular expressions (`re` module) to extract and compare skills.
-- **Multithreaded Follow-up Scheduler**: Spin up background worker threads to scan and alert upcoming follow-up deadlines without blocking the user response.
-- **Django REST Framework APIs**: Secured JSON API endpoints for mobile or external developer integrations.
-- **Horizontal Navigation Layout**: A modern top navigation menu expanding the workspace to 100% viewport width.
+* **GitHub Link:** [https://github.com/khushiagrawal062003/SmartHire-tracker-and-analyzer-](https://github.com/khushiagrawal062003/SmartHire-tracker-and-analyzer-)
+* **Deploy Link:** [https://smarthire-y2ot.onrender.com](https://smarthire-y2ot.onrender.com)
 
 ---
 
-## 🛠️ Technology Stack
+## Project Structure
 
-- **Backend**: Python 3.12, Django 5.0+, Django REST Framework (DRF)
-- **Database**: MongoDB (via `pymongo` for application data), SQLite (for user session authentication)
-- **Frontend**: HTML5, CSS3, Bootstrap 5, Bootstrap Icons, JavaScript (ES6)
-
----
-
-## ⚙️ Step-by-Step Local Setup Guide
-
-Follow these steps to run SmartHire on your local machine:
-
-### Step 1: Install Required Software
-Ensure you have the following installed:
-1. **Python (v3.12+)**: Download from [python.org](https://www.python.org/downloads/).
-2. **MongoDB Community Server**: Download from [mongodb.com](https://www.mongodb.com/try/download/community) (Make sure it runs as a service on port `27017`).
-3. **MongoDB Compass (Visual GUI)**: Download from [mongodb.com/products/tools/compass](https://www.mongodb.com/products/tools/compass) to inspect your NoSQL data.
-
-### Step 2: Open Terminal & Navigate to Project Directory
-Open your Command Prompt or PowerShell and go to the project directory:
-```bash
-cd C:\Users\Khushi\.gemini\antigravity\scratch\smarthire
-```
-
-### Step 3: Activate the Virtual Environment
-Activate the pre-configured virtual environment:
-```powershell
-# In Windows PowerShell:
-.\venv\Scripts\Activate.ps1
-```
-
-### Step 4: Run SQLite Database Migrations
-Initialize Django's user session storage system:
-```bash
-python manage.py migrate
-```
-
-### Step 5: Start the Development Server
-Run the local server:
-```bash
-python manage.py runserver
-```
-Your server will start running at **http://127.0.0.1:8000/**. Open **http://127.0.0.1:8000/analytics/** to view graphical pipeline distribution reports.
+* **smarthire/** - Django project settings, configurations, and core URL routers.
+* **tracker/** - Core job application management views, NoSQL queries, reminders timeline, and user dashboard.
+* **analyzer/** - Resume parser regular expression engine and matching results page.
+* **api/** - REST API views and serialization classes built with Django REST Framework.
+* **static/** - Global CSS styling (Light/Dark themes variables) and illustration graphics.
+* **templates/** - HTML templates extending the custom glassmorphic layout.
 
 ---
 
-## 📂 REST API Endpoints (Django REST Framework)
+## Setup Instructions
 
-All API requests are scoped to the authenticated user. Pass credentials or run requests within an active session.
+### Local Development
 
-- **List & Create Applications**:
-  - `GET /api/applications/` - List all applications owned by the user.
-  - `POST /api/applications/` - Create a new application document.
-- **Retrieve, Update, Delete & Analyze**:
-  - `GET /api/applications/<app_id>/` - Retrieve a specific application by its ID.
-  - `PUT /api/applications/<app_id>/` - Update fields of an application.
-  - `DELETE /api/applications/<app_id>/` - Permanently remove an application.
-  - `POST /api/applications/<app_id>/analyze/` - Upload and parse a resume file against this application.
+1. Navigate to the project root folder:
+   ```bash
+   cd SmartHire-tracker-and-analyzer-
+   ```
+
+2. Create a virtual environment and activate it:
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate   # Windows
+   ```
+
+3. Install requirements:
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. Database Setup:
+   * Make sure **MongoDB Community Server** is running locally on port `27017`.
+   * Apply SQLite migrations for user accounts and session registers:
+     ```bash
+     python manage.py migrate
+     ```
+
+5. Run the server:
+   ```bash
+   python manage.py runserver
+   ```
+   * The web application and Django REST APIs will be available at [http://127.0.0.1:8000](http://127.0.0.1:8000).
 
 ---
 
-## 🎥 Demo Preview Section
+## Building for Production
 
-Below is a placeholder for the user walkthrough visualization:
+* **Frontend:** Compress and collect static files (WhiteNoise setup):
+  ```bash
+  python manage.py collectstatic --no-input
+  ```
+* **Backend:** Use a production WSGI server pointing at `smarthire.wsgi:application` (using Gunicorn).
 
-![SmartHire Walkthrough](https://raw.githubusercontent.com/placeholder-images/smarthire-demo.gif)
+---
+
+## Deployment
+
+The application is deployed as a unified Python Web Service on **Render**, connecting to a cloud-hosted **MongoDB Atlas** cluster. 
+
+* Configure the **`MONGODB_URI`** environment variable in your Render dashboard environment panel to link your MongoDB Atlas cluster.
+* Set the **`DJANGO_SECRET_KEY`** and **`DEBUG=False`** variables for production safety.
+
+---
+
+## Contributing
+
+1. Fork the repository.
+2. Create a feature branch: `git checkout -b feature-name`.
+3. Make your changes and commit them with clear messages.
+4. Push to your fork and create a pull request.
+
+---
+
+## License
+
+This project is open source.
