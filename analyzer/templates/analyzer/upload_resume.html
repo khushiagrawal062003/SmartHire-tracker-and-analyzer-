@@ -56,4 +56,61 @@
         </form>
     </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const uploadArea = document.getElementById("uploadArea");
+    const fileInput = document.getElementById("fileInput");
+    const uploadText = document.getElementById("uploadText");
+    const uploadSubtext = document.getElementById("uploadSubtext");
+
+    // Click on upload area triggers hidden file input click
+    uploadArea.addEventListener("click", () => fileInput.click());
+
+    // Drag over highlight
+    uploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        uploadArea.classList.add("dragover");
+        uploadText.innerText = "Release to drop your resume";
+    });
+
+    uploadArea.addEventListener("dragleave", () => {
+        uploadArea.classList.remove("dragover");
+        uploadText.innerText = "Drag & Drop your Resume here";
+    });
+
+    uploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        uploadArea.classList.remove("dragover");
+        
+        if (e.dataTransfer.files.length) {
+            fileInput.files = e.dataTransfer.files;
+            updateFileInfo(e.dataTransfer.files[0]);
+        }
+    });
+
+    // Handle standard browse selection
+    fileInput.addEventListener("change", () => {
+        if (fileInput.files.length) {
+            updateFileInfo(fileInput.files[0]);
+        }
+    });
+
+    function updateFileInfo(file) {
+        if (file.name.endsWith('.txt')) {
+            uploadText.innerText = "Selected: " + file.name;
+            uploadSubtext.innerText = "File size: " + (file.size / 1024).toFixed(2) + " KB";
+            uploadArea.style.borderColor = "var(--success)";
+            uploadArea.style.backgroundColor = "var(--success-light)";
+        } else {
+            alert("Only plain text .txt files are supported!");
+            fileInput.value = "";
+            uploadText.innerText = "Drag & Drop your Resume here";
+            uploadSubtext.innerText = "or click to browse files from your computer explorer";
+            uploadArea.style.borderColor = "rgba(79, 70, 229, 0.3)";
+            uploadArea.style.backgroundColor = "var(--input-bg)";
+        }
+    }
+});
+</script>
 {% endblock %}
